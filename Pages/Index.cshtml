@@ -1,0 +1,405 @@
+﻿@page
+@model ATMApp.Pages.IndexModel
+@{
+    ViewData["Title"] = "ATM Dashboard";
+}
+
+<style>
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2980b9;
+        --success-color: #2ecc71;
+        --danger-color: #e74c3c;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .navbar {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        padding: 1rem 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+        display: flex;
+        align-items: center;
+    }
+    
+    .navbar-brand i {
+        margin-right: 10px;
+        font-size: 1.8rem;
+    }
+    
+    .main-container {
+        display: flex;
+        min-height: calc(100vh - 70px);
+    }
+    
+    .left-panel {
+        flex: 1;
+        padding: 2rem;
+        background-color: white;
+        border-right: 1px solid #eee;
+        max-width: 400px;
+    }
+    
+    .right-panel {
+        flex: 2;
+        padding: 2rem;
+        overflow-y: auto;
+    }
+    
+    h2, h3 {
+        color: var(--dark-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+        margin-top: 0;
+    }
+    
+    form {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    label {
+        display: block;
+        margin: 15px 0 5px;
+        font-weight: 600;
+        color: var(--dark-color);
+    }
+    
+    input[type="number"], select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: border 0.3s;
+    }
+    
+    input[type="number"]:focus, select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+    
+    button[type="submit"] {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background-color 0.3s, transform 0.2s;
+        width: 100%;
+    }
+    
+    button[type="submit"]:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+    
+    .account-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+    
+    .account-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+    
+    .account-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .account-card strong {
+        display: block;
+        color: var(--primary-color);
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .account-card .balance {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--dark-color);
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    
+    th {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+    }
+    
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+    
+    #transferSection, #singleAccount {
+        transition: all 0.3s ease;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        margin: 15px 0;
+    }
+    
+    .action-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .deposit-badge {
+        background-color: rgba(46, 204, 113, 0.2);
+        color: var(--success-color);
+    }
+    
+    .withdraw-badge {
+        background-color: rgba(231, 76, 60, 0.2);
+        color: var(--danger-color);
+    }
+    
+    .transfer-badge {
+        background-color: rgba(52, 152, 219, 0.2);
+        color: var(--primary-color);
+    }
+    
+    /* Validation styles */
+    .validation-summary-errors {
+        color: var(--danger-color);
+        background-color: rgba(231, 76, 60, 0.1);
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--danger-color);
+    }
+    
+    .validation-summary-errors ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .validation-summary-errors li {
+        margin: 5px 0;
+    }
+    
+    .field-validation-error {
+        color: var(--danger-color);
+        font-size: 14px;
+        display: block;
+        margin-top: 5px;
+    }
+    
+    .input-validation-error {
+        border-color: var(--danger-color) !important;
+    }
+    
+    .input-validation-error:focus {
+        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
+    }
+    
+    /* Font Awesome icons */
+    .fa-money-bill-wave { color: #2ecc71; }
+    .fa-exchange-alt { color: #3498db; }
+    .fa-wallet { color: #9b59b6; }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<nav class="navbar">
+    <a class="navbar-brand" href="#">
+        <i class="fas fa-piggy-bank"></i>
+        ATM Dashboard
+    </a>
+</nav>
+
+<div class="main-container">
+    <div class="left-panel">
+        <h2><i class="fas fa-money-bill-wave"></i> Transaction</h2>
+        
+        <!-- Validation Summary -->
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+        
+        <form method="post" id="transactionForm">
+            <div>
+                <label><i class="fas fa-dollar-sign"></i> Amount:</label>
+                <input type="number" step="0.01" asp-for="Amount" required placeholder="Enter amount" min="0.01" />
+                <span asp-validation-for="Amount" class="field-validation-error"></span>
+            </div>
+
+            <div>
+                <label><i class="fas fa-exchange-alt"></i> Action:</label>
+                <select asp-for="Action" required>
+                    <option value="">-- Select Action --</option>
+                    <option>Deposit</option>
+                    <option>Withdraw</option>
+                    <option>Transfer</option>
+                </select>
+                <span asp-validation-for="Action" class="field-validation-error"></span>
+            </div>
+
+            <div id="singleAccount">
+                <label><i class="fas fa-wallet"></i> Account:</label>
+                <select asp-for="SelectedAccount" required>
+                    <option value="">-- Select Account --</option>
+                    <option value="Checking">Checking</option>
+                    <option value="Savings">Savings</option>
+                </select>
+                <span asp-validation-for="SelectedAccount" class="field-validation-error"></span>
+            </div>
+
+            <div id="transferSection" style="display:none;">
+                <div>
+                    <label><i class="fas fa-sign-out-alt"></i> From Account:</label>
+                    <select asp-for="FromAccount">
+                        <option value="">-- Select Account --</option>
+                        <option value="Checking">Checking</option>
+                        <option value="Savings">Savings</option>
+                    </select>
+                    <span asp-validation-for="FromAccount" class="field-validation-error"></span>
+                </div>
+
+                <div>
+                    <label><i class="fas fa-sign-in-alt"></i> To Account:</label>
+                    <select asp-for="ToAccount">
+                        <option value="">-- Select Account --</option>
+                        <option value="Checking">Checking</option>
+                        <option value="Savings">Savings</option>
+                    </select>
+                    <span asp-validation-for="ToAccount" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <button type="submit">Process Transaction</button>
+        </form>
+    </div>
+
+    <div class="right-panel">
+        <h3><i class="fas fa-wallet"></i> Account Balances</h3>
+        <div class="account-cards">
+            @foreach (var account in Model.Accounts)
+            {
+                <div class="account-card">
+                    <strong>@account.Type Account</strong>
+                    <div class="balance">$@account.Balance.ToString("N2")</div>
+                </div>
+            }
+        </div>
+
+        <h3><i class="fas fa-history"></i> Transaction History</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tx in Model.Transactions)
+                {
+                    <tr>
+                        <td>@tx.Timestamp.ToShortTimeString()</td>
+                        <td>
+                            <span class="action-badge @(tx.Type.ToLower())-badge">@tx.Type</span>
+                        </td>
+                        <td>@tx.From</td>
+                        <td>@tx.To</td>
+                        <td>$@tx.Amount.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    
+    <script>
+        document.querySelector('select[name="Action"]').addEventListener('change', function () {
+            const isTransfer = this.value === 'Transfer';
+            document.getElementById('transferSection').style.display = isTransfer ? 'block' : 'none';
+            document.getElementById('singleAccount').style.display = isTransfer ? 'none' : 'block';
+            const form = document.getElementById('transactionForm');
+            $(form).removeData('validator');
+            $(form).removeData('unobtrusiveValidation');
+            $.validator.unobtrusive.parse(form);
+        });
+        $(document).ready(function() {
+            $('form').submit(function() {
+                const isTransfer = $('select[name="Action"]').val() === 'Transfer';
+                if (isTransfer) {
+                    const fromAccount = $('select[name="FromAccount"]').val();
+                    const toAccount = $('select[name="ToAccount"]').val();
+                    
+                    if (fromAccount && toAccount && fromAccount === toAccount) {
+                        alert('From and To accounts cannot be the same for transfers');
+                        return false;
+                    }
+                    
+                    if (fromAccount === '' || toAccount === '') {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        });
+    </script>
+}
