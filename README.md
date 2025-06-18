@@ -30,5 +30,5 @@ A simple web-based ATM application that allows managing checking and savings acc
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/atm-app.git
-   cd atm-app
+   git clone https://github.com/ayeshamk/dotnet-atmapp.git
+   cd dotnet-atmapp
