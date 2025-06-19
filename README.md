@@ -32,3 +32,16 @@ A simple web-based ATM application that allows managing checking and savings acc
    ```bash
    git clone https://github.com/ayeshamk/dotnet-atmapp.git
    cd dotnet-atmapp
+   dotnet run
+## AI Tool Usage
+
+This project partially used **OpenAI ChatGPT**.
+
+- **How it was used**:  
+  ChatGPT was used to help create the **HTML layout and styling** for the ATM dashboard.
+
+- **What was written by AI**:  
+  - Front-end interface (HTML structure and form layout)
+  - Basic UI styling and element arrangement for the dashboard
+
+All business logic, controller logic, model definitions, and backend structure were implemented manually.
